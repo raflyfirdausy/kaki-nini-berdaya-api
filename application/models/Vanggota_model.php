@@ -1,8 +1,8 @@
 <?php
 
-class Admin_model extends Custom_model
+class Vanggota_model extends Custom_model
 {
-    public $table           = 'm_admin';
+    public $table           = 'v_anggota';
     public $primary_key     = 'id';
     public $soft_deletes    = TRUE;
     public $timestamps      = TRUE;
@@ -11,6 +11,13 @@ class Admin_model extends Custom_model
     public function __construct()
     {
         parent::__construct();
+
+        $this->has_one['admin'] = array(
+            'foreign_model'     => 'Admin_model',
+            'foreign_table'     => 'm_admin',
+            'foreign_key'       => 'id',
+            'local_key'         => 'created_by'
+        );
 
         $this->has_one['prov'] = array(
             'foreign_model'     => 'Wilayah_provinsi_model',
@@ -38,13 +45,6 @@ class Admin_model extends Custom_model
             'foreign_table'     => 'wilayah_kelurahan',
             'foreign_key'       => 'id_kel',
             'local_key'         => 'id_kel'
-        );
-
-        $this->has_one['admin'] = array(
-            'foreign_model'     => 'Admin_model',
-            'foreign_table'     => 'm_admin',
-            'foreign_key'       => 'id',
-            'local_key'         => 'created_by'
         );
     }
 }

@@ -12,14 +12,23 @@ class Lansia extends REST_Controller
     {
         parent::__construct();
         $this->load->model("Lansia_model", "lansia");
+        $this->load->model("Vanggota_model", "vAnggota");
+        $this->load->model("Anggota_model", "anggota");
     }
 
     public function index_get()
     {
         $page       = $this->input->get("page", TRUE) ?: "1";
         $perPage    = $this->input->get("perpage", TRUE) ?: "10";
+        $jenis      = $this->input->get("jenis", TRUE);
+        $jenisX     = $this->input->get("jenis_x", TRUE);        
 
-        $data       = $this->filter($this->lansia)
+        $model      = $this->lansia;
+        if (!empty($jenis)) {
+            $model = $this->vAnggota;
+        }
+
+        $data       = $this->filter($model)
             ->with_prov("fields:nama")
             ->with_kab("fields:nama")
             ->with_kec("fields:nama")
@@ -27,11 +36,22 @@ class Lansia extends REST_Controller
             ->with_admin("fields:nama")
             ->as_array()
             ->limit($perPage, (($page - 1) * $perPage))
+            ->order_by("id", "DESC")
             ->get_all() ?: [];
 
-        $dataTotal = $this->filter($this->lansia)->as_array()->count_rows() ?: 0;
+        $dataTotal = $this->filter($model)->as_array()->count_rows() ?: 0;
 
-        if($data){
+        if ($data) {
+            if (!empty($jenisX)) {
+                for ($i = 0; $i < sizeof($data); $i++) {
+                    $data[$i]["anggota"]    = [
+                        "jenis"         => $jenisX,
+                        "id_lansia"     => $data[$i]["id"],
+                        "total"         => $this->anggota->where(["jenis" => $jenisX, "id_lansia" => $data[$i]["id"]])->count_rows() ?: 0
+                    ];
+                }
+            }
+
             return $this->response(array(
                 "status"                => true,
                 "response_code"         => REST_Controller::HTTP_OK,
@@ -53,7 +73,7 @@ class Lansia extends REST_Controller
                 "countData"             => (string) sizeof($data),
                 "data"                  => $data
             ), REST_Controller::HTTP_OK);
-        }        
+        }
     }
 
     public function filter($model = null)
@@ -64,6 +84,8 @@ class Lansia extends REST_Controller
         $id_kec     = $this->input->get("id_kec", TRUE);
         $id_kel     = $this->input->get("id_kel", TRUE);
         $search     = $this->input->get("search", TRUE);
+        $jenis      = $this->input->get("jenis", TRUE);
+        $id_lansia  = $this->input->get("id_lansia", TRUE);
 
         $data       = $model;
 
@@ -85,6 +107,14 @@ class Lansia extends REST_Controller
 
         if (!empty($search)) {
             $data = $data->where("LOWER(nama)", "LIKE", strtolower($search));
+        }
+
+        if (!empty($jenis)) {
+            $data = $data->where(["jenis" => $jenis]);
+        }
+
+        if (!empty($id_lansia)) {
+            $data = $data->where(["id_lansia" => $id_lansia]);
         }
 
         return $data;
