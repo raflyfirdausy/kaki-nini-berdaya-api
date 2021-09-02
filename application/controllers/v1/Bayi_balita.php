@@ -5,14 +5,18 @@ require APPPATH . '/libraries/REST_Controller.php';
 
 use Restserver\Libraries\REST_Controller;
 
-class Ibu_hamil extends REST_Controller
+class Bayi_balita extends REST_Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->title = "Ibu Hamil";
-        $this->load->model("Vibu_hamil_model", "vIbuHamil");
-        $this->load->model("Tr_ibu_hamil_model", "trIbuHamil");
+        $this->title = "Ibu dan Balita";
+        $this->load->model("Tr_bayibalita_model", "trBayiBalita");
+        $this->load->model("Vbayi_balita_model", "vBayiBalita");
+
+        $this->viewModel    = $this->vBayiBalita;
+        $this->model        = $this->trBayiBalita;
+        $this->title        = "Bayi dan Balita";
     }
 
     public function index_get()
@@ -20,7 +24,7 @@ class Ibu_hamil extends REST_Controller
         $page       = $this->input->get("page", TRUE) ?: "1";
         $perPage    = $this->input->get("perpage", TRUE) ?: "10";
 
-        $model      = $this->vIbuHamil;
+        $model      = $this->vBayiBalita;
         $data       = $this->filter($model)
             ->with_prov("fields:nama")
             ->with_kab("fields:nama")
@@ -35,10 +39,10 @@ class Ibu_hamil extends REST_Controller
         $dataTotal = $this->filter($model)->as_array()->count_rows() ?: 0;
         if ($data) {
 
-            for($i = 0; $i < sizeof($data); $i++) {
+            for ($i = 0; $i < sizeof($data); $i++) {
                 $data[$i]["bulan_tampil"]   = bulan($data[$i]["bulan"]) . " " . $data[$i]["tahun"];
             }
-            
+
             return $this->response(array(
                 "status"                => true,
                 "response_code"         => REST_Controller::HTTP_OK,
@@ -104,11 +108,10 @@ class Ibu_hamil extends REST_Controller
         return $data;
     }
 
-    public function index_post(){
+    public function index_post()
+    {
         $id_lansia      = $this->input->post("id_lansia");
         $id_anggota     = $this->input->post("id_anggota");
-        $usia_kehamilan = $this->input->post("usia_kehamilan");
-        $kunjungan      = $this->input->post("kunjungan");
 
         $bulan          = $this->input->post("bulan") ? $this->input->post("bulan") + 1 : null;
         $tahun          = $this->input->post("tahun");
@@ -117,6 +120,11 @@ class Ibu_hamil extends REST_Controller
         $isForce        = $this->input->post("is_force");
         $isEdit         = $this->input->post("is_edit") ?: "TIDAK";
         $id_edit        = $this->input->post("id_edit");
+
+        $asi            = $this->input->post("asi");
+        $penimbangan_bb = $this->input->post("penimbangan_bb");
+        $vitamin        = $this->input->post("vitamin");
+        $imunisasi      = $this->input->post("imunisasi");
 
         //TODO : CEK 
         if (empty($id_admin)) {
@@ -155,24 +163,6 @@ class Ibu_hamil extends REST_Controller
             ), REST_Controller::HTTP_OK);
         }
 
-        if (empty($usia_kehamilan)) {
-            return $this->response(array(
-                "status"                => true,
-                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
-                "response_message"      => "Usia kehamilan tidak diketahui",
-                "data"                  => NULL
-            ), REST_Controller::HTTP_OK);
-        }
-
-        if (empty($kunjungan)) {
-            return $this->response(array(
-                "status"                => true,
-                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
-                "response_message"      => "Kunjungan kehamilan tidak diketahui",
-                "data"                  => NULL
-            ), REST_Controller::HTTP_OK);
-        }
-
         if (empty($isForce)) {
             return $this->response(array(
                 "status"                => true,
@@ -182,7 +172,45 @@ class Ibu_hamil extends REST_Controller
             ), REST_Controller::HTTP_OK);
         }
 
-        $cekInput = $this->vIbuHamil->where([
+        //! DATA GAES
+
+        if (empty($asi)) {
+            return $this->response(array(
+                "status"                => true,
+                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
+                "response_message"      => "ASI tidak diketahui",
+                "data"                  => NULL
+            ), REST_Controller::HTTP_OK);
+        }
+
+        if (empty($penimbangan_bb)) {
+            return $this->response(array(
+                "status"                => true,
+                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
+                "response_message"      => "Penimbangan Berat Badan tidak diketahui",
+                "data"                  => NULL
+            ), REST_Controller::HTTP_OK);
+        }
+
+        if (empty($vitamin)) {
+            return $this->response(array(
+                "status"                => true,
+                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
+                "response_message"      => "Vitamin tidak diketahui",
+                "data"                  => NULL
+            ), REST_Controller::HTTP_OK);
+        }
+
+        if (empty($imunisasi)) {
+            return $this->response(array(
+                "status"                => true,
+                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
+                "response_message"      => "Imunisasi tidak diketahui",
+                "data"                  => NULL
+            ), REST_Controller::HTTP_OK);
+        }
+
+        $cekInput = $this->viewModel->where([
             "id_lansia"     => $id_lansia,
             "id_anggota"    => $id_anggota,
             "bulan"         => $bulan,
@@ -192,8 +220,12 @@ class Ibu_hamil extends REST_Controller
         $dataInput = [
             "id_lansia"     => $id_lansia,
             "id_anggota"    => $id_anggota,
-            "usia_kehamilan"=> $usia_kehamilan,
-            "kunjungan"     => $kunjungan,
+
+            "asi"           => $asi,
+            "penimbangan_bb" => $penimbangan_bb,
+            "vitamin"       => $vitamin,
+            "imunisasi"     => $imunisasi,
+
             "bulan"         => $bulan,
             "tahun"         => $tahun,
             "created_by"    => $id_admin
@@ -209,7 +241,7 @@ class Ibu_hamil extends REST_Controller
                         "data"                  => NULL
                     ), REST_Controller::HTTP_OK);
                 } else {
-                    $update = $this->trIbuHamil->where(["id" => $cekInput["id"]])->update($dataInput);
+                    $update = $this->model->where(["id" => $cekInput["id"]])->update($dataInput);
                     if ($update) {
                         return $this->response(array(
                             "status"                => true,
@@ -227,7 +259,7 @@ class Ibu_hamil extends REST_Controller
                     }
                 }
             }
-            $insert = $this->trIbuHamil->insert($dataInput);
+            $insert = $this->model->insert($dataInput);
             if ($insert) {
                 return $this->response(array(
                     "status"                => true,
@@ -244,17 +276,17 @@ class Ibu_hamil extends REST_Controller
                 ), REST_Controller::HTTP_OK);
             }
         } else {
-            $cekInputUpdate = $this->trIbuHamil->where([
+            $cekInputUpdate = $this->model->where([
                 "id"        => $id_edit,
             ])->get();
             if ($cekInputUpdate) {
-                $cekInputX = $this->trIbuHamil->where([
+                $cekInputX = $this->model->where([
                     "id"        => $id_edit,
                     "bulan"     => $bulan,
                     "tahun"     => $tahun,
                 ])->get();
                 if ($cekInputX) {
-                    $update = $this->trIbuHamil->where(["id" => $cekInputUpdate["id"]])->update($dataInput);
+                    $update = $this->model->where(["id" => $cekInputUpdate["id"]])->update($dataInput);
                     if ($update) {
                         return $this->response(array(
                             "status"                => true,
@@ -292,7 +324,7 @@ class Ibu_hamil extends REST_Controller
     public function delete_post()
     {
         $id             = $this->input->post("id");
-        $delete         = $this->trIbuHamil->where(["id" => $id])->delete();
+        $delete         = $this->model->where(["id" => $id])->delete();
 
         if ($delete) {
             return $this->response(array(

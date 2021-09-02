@@ -1,6 +1,6 @@
 <?php
 
-class Tr_bayibalita extends Custom_model
+class Tr_bayibalita_model extends Custom_model
 {
     public $table           = 'tr_bayi_balita';
     public $primary_key     = 'id';
