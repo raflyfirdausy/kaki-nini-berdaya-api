@@ -2,7 +2,7 @@
 
 class Tr_ibu_hamil_model extends Custom_model
 {
-    public $table           = 'tr_bayi_balita';
+    public $table           = 'tr_ibu_hamil';
     public $primary_key     = 'id';
     public $soft_deletes    = TRUE;
     public $timestamps      = TRUE;

@@ -94,15 +94,15 @@ class Lansia extends REST_Controller
         }
 
         if (!empty($id_kab)) {
-            $data = $data->where(["id_kab" => $id_prov]);
+            $data = $data->where(["id_kab" => $id_kab]);
         }
 
         if (!empty($id_kec)) {
-            $data = $data->where(["id_kec" => $id_prov]);
+            $data = $data->where(["id_kec" => $id_kec]);
         }
 
         if (!empty($id_kel)) {
-            $data = $data->where(["id_kel" => $id_prov]);
+            $data = $data->where(["id_kel" => $id_kel]);
         }
 
         if (!empty($search)) {
