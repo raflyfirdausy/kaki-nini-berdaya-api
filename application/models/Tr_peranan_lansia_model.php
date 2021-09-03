@@ -2,7 +2,7 @@
 
 class Tr_peranan_lansia_model extends Custom_model
 {
-    public $table           = 'tr_pesanan_lansia';
+    public $table           = 'tr_peranan_lansia';
     public $primary_key     = 'id';
     public $soft_deletes    = TRUE;
     public $timestamps      = TRUE;
