@@ -123,6 +123,10 @@ class Aus extends REST_Controller
         $imunisasi_tt   = $this->input->post("imunisasi_tt");       
         $sarapan        = $this->input->post("sarapan");       
 
+        //!TAMBAHAN REVISI
+        $reproduksi     = $this->input->post("reproduksi"); 
+        $olahraga       = $this->input->post("olahraga"); 
+
         //TODO : CEK 
         if (empty($id_admin)) {
             return $this->response(array(
@@ -138,6 +142,15 @@ class Aus extends REST_Controller
                 "status"                => true,
                 "response_code"         => REST_Controller::HTTP_NOT_FOUND,
                 "response_message"      => "Lansia tidak diketahui",
+                "data"                  => NULL
+            ), REST_Controller::HTTP_OK);
+        }
+
+        if (empty($reproduksi)) {
+            return $this->response(array(
+                "status"                => true,
+                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
+                "response_message"      => "Memberikan informasi kesehatan reproduksi tidak diketahui",
                 "data"                  => NULL
             ), REST_Controller::HTTP_OK);
         }
@@ -180,7 +193,7 @@ class Aus extends REST_Controller
             ), REST_Controller::HTTP_OK);
         }
 
-        if (empty($sarapan)) {
+        if (($sarapan) == "") {
             return $this->response(array(
                 "status"                => true,
                 "response_code"         => REST_Controller::HTTP_NOT_FOUND,
@@ -202,6 +215,8 @@ class Aus extends REST_Controller
 
             "imunisasi_tt"  => $imunisasi_tt,
             "sarapan"       => $sarapan,
+            "reproduksi"    => $reproduksi,
+            "olahraga"      => $olahraga,
 
             "bulan"         => $bulan,
             "tahun"         => $tahun,

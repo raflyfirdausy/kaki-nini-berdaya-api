@@ -123,6 +123,11 @@ class Bayi_balita extends REST_Controller
 
         $asi            = $this->input->post("asi");
         $penimbangan_bb = $this->input->post("penimbangan_bb");
+
+        //! TAMBAHAN
+        $bb             = $this->input->post("bb");
+        $tb             = $this->input->post("tb");
+        
         $vitamin        = $this->input->post("vitamin");
         $imunisasi      = $this->input->post("imunisasi");
 
@@ -223,6 +228,8 @@ class Bayi_balita extends REST_Controller
 
             "asi"           => $asi,
             "penimbangan_bb" => $penimbangan_bb,
+            "bb"            => $bb,
+            "tb"            => $tb,
             "vitamin"       => $vitamin,
             "imunisasi"     => $imunisasi,
 

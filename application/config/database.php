@@ -98,7 +98,7 @@ $db['default'] = array(
 
 $db['prod'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => '103.133.223.26',
 	'username' => 'ultrane_kanida',
 	'password' => 'ultrane_kanida',
 	'database' => 'ultrane_kanida',

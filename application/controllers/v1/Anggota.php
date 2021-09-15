@@ -18,7 +18,7 @@ class Anggota extends REST_Controller
     public function index_get()
     {
         $page       = $this->input->get("page", TRUE)       ?: "1";
-        $perPage    = $this->input->get("perpage", TRUE)    ?: "10";        
+        $perPage    = $this->input->get("perpage", TRUE)    ?: "10";
 
         $model      = $this->vAnggota;
         $data       = $this->filter($model)
@@ -26,7 +26,7 @@ class Anggota extends REST_Controller
             ->with_kab("fields:nama")
             ->with_kec("fields:nama")
             ->with_kel("fields:nama")
-            ->with_admin("fields:nama")            
+            ->with_admin("fields:nama")
             ->as_array()
             ->limit($perPage, (($page - 1) * $perPage))
             ->order_by("id", "DESC")
@@ -104,6 +104,11 @@ class Anggota extends REST_Controller
         $id_lansia  = $this->input->post("id_lansia");
         $jenis      = $this->input->post("jenis");
         $nama       = $this->input->post("nama");
+
+        //! TAMBAHAN REVISI
+        $jenis_kelamin  = $this->input->post("jenis_kelamin");
+        $usia           = $this->input->post("usia");
+
         $created_by = $this->input->post("created_by");
 
         if (empty($nama)) {
@@ -122,10 +127,12 @@ class Anggota extends REST_Controller
 
 
         $insert     = $this->anggota->insert([
-            "id_lansia"     => $id_lansia,
-            "jenis"         => $jenis,
-            "nama"          => $nama,
-            "created_by"    => $created_by,
+            "id_lansia"             => $id_lansia,
+            "jenis"                 => $jenis,
+            "nama"                  => $nama,
+            "jenis_kelamin_anggota" => $jenis_kelamin,
+            "usia_anggota"          => $usia,
+            "created_by"            => $created_by,
         ]);
         if ($insert) {
             return $this->response(array(
@@ -166,6 +173,9 @@ class Anggota extends REST_Controller
     {
         $id         = $this->input->post("id");
         $nama       = $this->input->post("nama");
+        //! TAMBAHAN REVISI
+        $jenis_kelamin  = $this->input->post("jenis_kelamin");
+        $usia           = $this->input->post("usia");
 
         if (empty($nama)) {
             return $this->response(array(
@@ -175,7 +185,11 @@ class Anggota extends REST_Controller
             ), REST_Controller::HTTP_OK);
         }
 
-        $update = $this->anggota->where(["id" => $id])->update(["nama" => $nama]);
+        $update = $this->anggota->where(["id" => $id])->update([
+            "nama"                  => $nama,
+            "jenis_kelamin_anggota" => $jenis_kelamin,
+            "usia_anggota"          => $usia,
+        ]);
         if ($update) {
             return $this->response(array(
                 "status"                => true,
