@@ -11,6 +11,6 @@ class Auth extends MY_Controller
 
     public function index()
     {
-        echo "RAFLY WAS HERE !!";
+        echo "RAFLY WAS HERE !! :P";
     }   
 }
