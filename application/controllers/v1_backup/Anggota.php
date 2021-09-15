@@ -7,34 +7,18 @@ use Restserver\Libraries\REST_Controller;
 
 class Anggota extends REST_Controller
 {
-    private $adminX;
+
     public function __construct()
     {
         parent::__construct();
         $this->load->model("Anggota_model", "anggota");
         $this->load->model("Vanggota_model", "vAnggota");
-        $this->load->model("Admin_model", "admin");
     }
 
     public function index_get()
     {
         $page       = $this->input->get("page", TRUE)       ?: "1";
         $perPage    = $this->input->get("perpage", TRUE)    ?: "10";
-
-        $id_admin   = $this->input->get("id_admin", TRUE);
-        $this->adminX      = $this->admin->where(["id" => $id_admin])->get();
-        if (!$this->adminX) {
-            return $this->response(array(
-                "status"                => true,
-                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
-                "response_message"      => "Data admin tidak ditemukan",
-                "dataTotal"             => (string) 0,
-                "page"                  => (string) $page,
-                "perPage"               => (string) $perPage,
-                "countData"             => (string) 0,
-                "data"                  => NULL
-            ), REST_Controller::HTTP_OK);
-        }
 
         $model      = $this->vAnggota;
         $data       = $this->filter($model)
@@ -111,18 +95,6 @@ class Anggota extends REST_Controller
             $data = $data->where("LOWER(nama)", "LIKE", strtolower($search));
             // $data = $data->where("LOWER(nama_lansia)", "LIKE", strtolower($search), TRUE);
         }
-
-        if ($this->adminX["level"] == "KADER") {
-            $data = $data->where(["created_by" => $this->adminX["id"]]);
-        }
-
-        if ($this->adminX["level"] == "PUSKESMAS") {
-            $data = $data->where(["id_kec" => $this->adminX["id_kec"]]);
-        }
-
-        if ($this->adminX["level"] == "DESA") {
-            $data = $data->where(["id_kel" => $this->adminX["id_kel"]]);
-        }   
 
         return $data;
     }

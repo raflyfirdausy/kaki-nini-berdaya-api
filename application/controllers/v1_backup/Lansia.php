@@ -7,15 +7,13 @@ use Restserver\Libraries\REST_Controller;
 
 class Lansia extends REST_Controller
 {
-    
-    private $adminX;
+
     public function __construct()
     {
         parent::__construct();
         $this->load->model("Lansia_model", "lansia");
         $this->load->model("Vanggota_model", "vAnggota");
         $this->load->model("Anggota_model", "anggota");
-        $this->load->model("Admin_model", "admin");
     }
 
     public function index_get()
@@ -23,23 +21,7 @@ class Lansia extends REST_Controller
         $page       = $this->input->get("page", TRUE) ?: "1";
         $perPage    = $this->input->get("perpage", TRUE) ?: "10";
         $jenis      = $this->input->get("jenis", TRUE);
-        $jenisX     = $this->input->get("jenis_x", TRUE);
-
-        $id_admin   = $this->input->get("id_admin", TRUE);
-        $this->adminX      = $this->admin->where(["id" => $id_admin])->get();
-        if (!$this->adminX) {
-            return $this->response(array(
-                "status"                => true,
-                "response_code"         => REST_Controller::HTTP_NOT_FOUND,
-                "response_message"      => "Data admin tidak ditemukan",
-                "dataTotal"             => (string) 0,
-                "page"                  => (string) $page,
-                "perPage"               => (string) $perPage,
-                "countData"             => (string) 0,
-                "data"                  => NULL
-            ), REST_Controller::HTTP_OK);
-        }
-
+        $jenisX     = $this->input->get("jenis_x", TRUE);        
 
         $model      = $this->lansia;
         if (!empty($jenis)) {
@@ -133,18 +115,6 @@ class Lansia extends REST_Controller
 
         if (!empty($id_lansia)) {
             $data = $data->where(["id_lansia" => $id_lansia]);
-        }
-
-        if ($this->adminX["level"] == "KADER") {
-            $data = $data->where(["created_by" => $this->adminX["id"]]);
-        }
-
-        if ($this->adminX["level"] == "PUSKESMAS") {
-            $data = $data->where(["id_kec" => $this->adminX["id_kec"]]);
-        }
-
-        if ($this->adminX["level"] == "DESA") {
-            $data = $data->where(["id_kel" => $this->adminX["id_kel"]]);
         }
 
         return $data;
