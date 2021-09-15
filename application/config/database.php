@@ -72,7 +72,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 
 $query_builder = TRUE;
-$active_group = "default";
+$active_group = "prod";
 
 $db['default'] = array(
 	'dsn'	=> '',
