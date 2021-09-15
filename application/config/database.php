@@ -74,6 +74,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $query_builder = TRUE;
 $active_group = "prod";
 
+if (
+	substr($_SERVER['SERVER_NAME'], 0, 3) == "192" ||
+	substr($_SERVER['SERVER_NAME'], 0, 3) == "193" ||
+	$_SERVER['SERVER_NAME'] == "localhost"
+) {
+	$active_group = "default";
+}
+
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
