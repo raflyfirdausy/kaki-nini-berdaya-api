@@ -288,7 +288,14 @@ $config['rest_ip_blacklist'] = '';
 | if you have any of these features enabled
 |
 */
-$config['rest_database_group'] = 'default';
+$config['rest_database_group'] = 'prod';
+if (
+	substr($_SERVER['SERVER_NAME'], 0, 3) == "192" ||
+	substr($_SERVER['SERVER_NAME'], 0, 3) == "193" ||
+	$_SERVER['SERVER_NAME'] == "localhost"
+) {
+	$config['rest_database_group'] = "default";
+}
 
 /*
 |--------------------------------------------------------------------------
