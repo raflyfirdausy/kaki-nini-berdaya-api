@@ -41,4 +41,50 @@ class Auth extends REST_Controller
             ), REST_Controller::HTTP_OK);
         }
     }
+
+    public function login_post()
+    {
+        $no_hp      = $this->input->post("no_hp", TRUE);
+        $password   = $this->input->post("password", TRUE);
+
+        $cek = $this->admin
+            ->with_prov()
+            ->with_kab()
+            ->with_kec()
+            ->with_kel()
+            ->where(["no_hp" => $no_hp, "password" => md5($password)])
+            ->get();
+
+        if ($cek) {
+            return $this->response(array(
+                "status"                => true,
+                "response_code"         => REST_Controller::HTTP_OK,
+                "response_message"      => "Login Sudah benar",
+                "data"                  => $cek
+            ), REST_Controller::HTTP_OK);
+        } else {
+            $cek = $this->admin
+            ->with_prov()
+            ->with_kab()
+            ->with_kec()
+            ->with_kel()
+            ->where(["no_hp" => $no_hp, "password" => $password])
+            ->get();
+            if ($cek) {
+                return $this->response(array(
+                    "status"                => true,
+                    "response_code"         => REST_Controller::HTTP_OK,
+                    "response_message"      => "Login Sudah benar",
+                    "data"                  => $cek
+                ), REST_Controller::HTTP_OK);
+            } else {
+                return $this->response(array(
+                    "status"                => true,
+                    "response_code"         => REST_Controller::HTTP_NOT_FOUND,
+                    "response_message"      => "No HP atau Password yang kamu masukan salah",
+                    "data"                  => NULL
+                ), REST_Controller::HTTP_OK);
+            }           
+        }
+    }
 }

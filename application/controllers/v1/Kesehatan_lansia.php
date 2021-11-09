@@ -114,6 +114,9 @@ class Kesehatan_lansia extends REST_Controller
         $isEdit         = $this->input->post("is_edit") ?: "TIDAK";
         $id_edit        = $this->input->post("id_edit");
 
+        //! REVISI
+        $penyakit       = $this->input->post("penyakit");
+
 
         //TODO : CEK 
         if (empty($id_admin)) {
@@ -225,7 +228,10 @@ class Kesehatan_lansia extends REST_Controller
             "asam_urat"     => $asam_urat,
             "bulan"         => $bulan,
             "tahun"         => $tahun,
-            "created_by"    => $id_admin
+            "created_by"    => $id_admin,
+            
+            //! RAVISI
+            "penyakit"      => $penyakit,
         ];
         if ($isEdit == "TIDAK") {
             if ($cekInput) {
