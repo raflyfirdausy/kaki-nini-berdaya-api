@@ -79,7 +79,7 @@ if (
 	substr($_SERVER['SERVER_NAME'], 0, 3) == "193" ||
 	$_SERVER['SERVER_NAME'] == "localhost"
 ) {
-	$active_group = "default";
+	$active_group = "prod";
 }
 
 $db['default'] = array(
@@ -106,7 +106,7 @@ $db['default'] = array(
 
 $db['prod'] = array(
 	'dsn'	=> '',
-	'hostname' => '103.133.223.26',
+	'hostname' => 'ultranesia.com',
 	'username' => 'ultrane_kanida',
 	'password' => 'ultrane_kanida',
 	'database' => 'ultrane_kanida',
