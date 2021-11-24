@@ -80,21 +80,42 @@ class Grafik extends REST_Controller
                     "berdaya"           => (int) $lansiaBerdaya,
                     "tidak_berdaya"     => (int) $lansiaTidakBerdaya,
                     "total"             => (int) $totalLansia,
-                    "persentase"        => (double) number_format(($lansiaBerdaya / $totalLansia * 100), 2)
+                    "persentase"        => (float) number_format(($lansiaBerdaya / $totalLansia * 100), 2)
                 ],
             ];
 
             array_push($result["detail"], $data_tmp);
         }
 
-
-
-
         return $this->response(array(
             "status"                => true,
             "response_code"         => REST_Controller::HTTP_OK,
             "response_message"      => "Data ditemukan",
             "data"                  => $result
+        ), REST_Controller::HTTP_OK);
+    }
+
+    public function peta_get()
+    {
+        $cilacap    = "3301";
+        $banyumas   = "3302";
+
+        $id_kab     = $this->input->get("id_kab");
+        $kondisi = [];
+        if (!empty($id_kab)) {
+            $kondisi["id_kab"] = $id_kab;
+        }
+
+        $data = $this->lansia
+            ->fields(["id", "nama", "latitude", "longitude", "id_prov", "id_kab", "id_kec", "id_kel"])
+            ->where($kondisi)
+            ->get_all();
+
+        return $this->response(array(
+            "status"                => true,
+            "response_code"         => REST_Controller::HTTP_OK,
+            "response_message"      => "Data ditemukan",
+            "data"                  => $data
         ), REST_Controller::HTTP_OK);
     }
 }
