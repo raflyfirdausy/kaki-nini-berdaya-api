@@ -95,6 +95,7 @@ class Grafik extends REST_Controller
         ), REST_Controller::HTTP_OK);
     }
 
+    
     public function peta_get()
     {
         $cilacap    = "3301";
