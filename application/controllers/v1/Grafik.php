@@ -45,6 +45,62 @@ class Grafik extends REST_Controller
         ), REST_Controller::HTTP_OK);
     }
 
+    public function peta_new_get()
+    {
+        $this->load->model("Vlansia_berdaya_model", "vBerdaya");
+        $this->load->model("Vlansia_tidak_berdaya_model", "vTidakBerdaya");
+
+        $id_kab     = $this->input->get("id_kab");
+        $tahun      = $this->input->get("tahun") ?: date("Y");
+        $bulan      = $this->input->get("bulan") ?: (int) date("m");
+
+        $kondisi["tahun"] = $tahun;
+        $kondisi["bulan"] = $bulan;
+        if (!empty($id_kab)) {
+            $kondisi["id_kab"] = $id_kab;
+        }
+
+        $result     = [];
+
+        $berdaya    = $this->vBerdaya
+            ->fields(["nama", "latitude", "longitude"])
+            ->where($kondisi)
+            ->get_all();
+        if ($berdaya) {
+            for ($i = 0; $i < sizeof($berdaya); $i++) {
+                $berdaya[$i]["keterangan"] = "Lansia Berdaya";
+                $berdaya[$i]["is_berdaya"] = "YA";
+                array_push($result, $berdaya[$i]);
+            }
+        }
+
+        $tidakBerdaya    = $this->vTidakBerdaya
+            ->fields(["nama", "latitude", "longitude"])
+            ->where($kondisi)
+            ->get_all();
+
+        if ($tidakBerdaya) {
+            for ($i = 0; $i < sizeof($tidakBerdaya); $i++) {
+                $tidakBerdaya[$i]["keterangan"] = "Lansia Kurang Berdaya";
+                $tidakBerdaya[$i]["is_berdaya"] = "TIDAK";
+                array_push($result, $tidakBerdaya[$i]);
+            }
+        }
+
+        return $this->response(array(
+            "status"                => true,
+            "response_code"         => REST_Controller::HTTP_OK,
+            "response_message"      => "Data ditemukan",
+            "data"                  => [
+                "waktu"         => [
+                    "tahun"     => $tahun,
+                    "bulan"     => $bulan
+                ],
+                "result"        => $result
+            ]
+        ), REST_Controller::HTTP_OK);
+    }
+
     public function desa_get()
     {
 
