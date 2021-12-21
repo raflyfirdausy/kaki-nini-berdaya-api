@@ -51,8 +51,8 @@ class Grafik extends REST_Controller
         $this->load->model("Vlansia_tidak_berdaya_model", "vTidakBerdaya");
 
         $id_kab     = $this->input->get("id_kab");
-        $tahun      = $this->input->get("tahun") ?: date("Y");
-        $bulan      = $this->input->get("bulan") ?: (int) date("m");
+        $tahun      = $this->input->get("tahun") ?: 2021;
+        $bulan      = $this->input->get("bulan") ?: (int) 11;
 
         $kondisi["tahun"] = $tahun;
         $kondisi["bulan"] = $bulan;
